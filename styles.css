@@ -1,0 +1,129 @@
+/* Main stuff */
+body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-align: center;
+    background-color: beige;
+}
+
+#header {
+    border: 2px solid bisque;
+    border-radius: 12px;
+    padding: 20px;
+    background: bisque;
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#fruit {
+    width: 200px;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+#fruit:active {
+    transform: scale(0.95);
+}
+
+/* Button styling */
+.buttons button {
+    background-color: bisque;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.buttons button:hover {
+    background-color: antiquewhite;
+    transform: scale(1.05);
+}
+
+/* Sections */
+.section {
+    border: 2px solid burlywood;
+    padding: 24px;
+    background: blanchedalmond;
+    border-radius: 12px;
+    width: 500px;
+    margin: 40px auto;
+    transition: opacity 0.3s, transform 0.3s;
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+    height: 400px;
+    overflow-y: auto;
+}
+
+/* Upgrades */
+.upgradeImages {
+    width: 50px;
+    height: auto;
+}
+
+.upgradeItem {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+    border: 2px solid wheat;
+    border-radius: 10px;
+    background-color: wheat;
+}
+
+/* Buy buttons */
+.buyButtons {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    transition: all 0.2s;
+}
+
+.buyButtons:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.buyButtons:disabled {
+    background-color: #cccccc !important;
+    color: #666666;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.buyButtons:disabled:hover {
+    background-color: #cccccc !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Cost styling */
+.message {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background-color: white;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+/* Mental health awareness button styling */
+#mentalHealth {
+    background-color: blue;
+}
+
+#mentalHealth:hover {
+    background-color: skyblue;
+}

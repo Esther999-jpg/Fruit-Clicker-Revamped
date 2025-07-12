@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Clicker</title>
+    <link rel="stylesheet" href="styles.css?v=1">
+</head>
+
+<body>
+    
+    <!-- Main section -->
+    <div>
+        <h1 id="header">Fruit Clicker [Revamped]</h1>
+        <h2>Fruits: <span id="fruitCounter">0</span></h2>
+        <img id="fruit" src="Images/rainbowApple-removebg-preview.png" alt="Rainbow Apple"><br>
+    </div>
+    
+    <!-- Section for buttons -->
+    <div class="buttons">
+        <button id="reset">Reset</button>
+        <button id="shopButton">Shop</button>
+        <button id="clickerUpgrades">Boosts</button>
+        <button id="achievements">Achievements</button>
+    </div>
+
+    <!-- Special section for the mental health awareness button -->
+    <br><div class="buttons">
+        <button id="mentalHealth">Mental Health Awareness</button>
+    </div>
+
+    <!-- Section just for the shop section -->
+    <div id="shopSection" class="section">
+        <h1>Welcome to the shop!</h1>
+        <p>Here are the current upgrades!</p>
+        
+        <!-- The upgrade list -->
+        <div>
+            <!-- Fruit Clickers -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/fruitClicker(1).png" alt="fruitClicker">
+                <p>Fruit Clicker [<span id="fruitClickers">0</span>]</p>
+                <button id="buyClickers" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="clickerCost">10</span></p>
+            </div>
+            <!-- Workers -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/worker.png" alt="workers">
+                <p>Workers [<span id="workers">0</span>]</p>
+                <button id="buyWorkers" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="workerCost">100</span></p>
+            </div>
+            <!-- Farms -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/farm.jpg" alt="farms">
+                <p>Farms [<span id="farms">0</span>]</p>
+                <button id="buyFarms" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="farmCost">1000</span></p>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button id="closeShop">Close</button>
+        </div>
+    </div>
+
+    <!-- Section for the boosts section -->
+    <div id="clickerShop" class="section">
+        <h1>Buy boosts here!</h1>
+        <p>Here are the current upgrades!</p>
+        
+        <!-- The upgrade list -->
+        <div>
+            <!-- Better Gloves -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/betterGloves.png" alt="betterGloves">
+                <p>Better Gloves</p>
+                <button id="buyGloves" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="gloveCost">100</span></p>
+            </div>
+            <!-- Better Gear -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/betterGear.png" alt="betterGear">
+                <p>Better Gear</p>
+                <button id="buyGear" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="gearCost">2500</span></p>
+            </div>
+            <!-- Oxen-Pulled Plows -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/oxenPulledPlow.png" alt="oxenPulledPlow">
+                <p>Oxen-Pulled Plows</p>
+                <button id="buyPlow" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="plowCost">10000</span></p>
+            </div>
+            <!-- Better Irrigation Systems -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/betterIrrigation.jpg" alt="betterIrrigation">
+                <p>Better Irrigation</p>
+                <button id="buyIrrigation" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="irrigationCost">10000</span></p>
+            </div>
+            <!-- Roman Innovations -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/romanInnovations.png" alt="romanInnovations">
+                <p>Roman Innovations</p>
+                <button id="buyRome" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="romeCost">25000</span></p>
+            </div>
+            <!-- Europe's Three Field System -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/europeanFields.jpg" alt="europeanFields">
+                <p>Europe's Three Field System</p>
+                <button id="buyEurope" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="europeCost">25000</span></p>
+            </div>
+            <!-- Terracing -->
+            <div class="upgradeItem">
+                <img class="upgradeImages" src="Images/terrace.jpg" alt="terracing">
+                <p>Terracing</p>
+                <button id="buyTerraces" class="buyButtons">Buy</button>
+                <p id="costAmount" class="message">Cost: <span id="terraceCost">25000</span></p>
+            </div>
+            
+        </div>
+
+        <div class="buttons">
+            <button id="closeClickerShop"">Close</button>
+        </div>
+    </div>
+
+    <!-- Section for the achievements section -->
+    <div id="achievementSection" class="section">
+        <h1>Achievements!</h1>
+        <p>See all your achievements here!</p>
+
+        <!-- The achievement list -->
+        <div>
+            <!-- First Click -->
+            <div class="upgradeItem">
+                <img id="firstClickImg" class="upgradeImages" src="Images/achievements.png" alt="trophy">
+                <p id="firstClickMessage" class="message">Your first click!</p>
+            </div>
+            <!-- First Clicker -->
+            <div class="upgradeItem">
+                <img id="firstClickerImg" class="upgradeImages" src="Images/achievements.png" alt="trophy">
+                <p id="firstClickerMessage" class="message">Your first fruit clicker!</p>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button id="closeAchievementSection"">Close</button>
+        </div>
+    </div>
+    
+    <script src="main.js?v=1"></script>
+</body>
+
+</html>
