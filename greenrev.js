@@ -1,11 +1,37 @@
+// ===== PRESTIGE LOADING =====
+function resetPrestige() {
+    if (confirm('Are you sure you want to go back to the original game? This will reset your prestige progress.')) {
+        localStorage.removeItem('hasPrestiged')
+        localStorage.removeItem('currentPrestigeLevel')
+        localStorage.removeItem('prestigeData')
+        window.location.href = 'index.html'
+    }
+}
+
+// Load prestige data when the page loads
+window.addEventListener('load', function() {
+    const prestigeData = localStorage.getItem('prestigeData')
+    
+    if (prestigeData) {
+        const data = JSON.parse(prestigeData)
+        console.log('Prestige Level:', data.prestigeLevel)
+        console.log('Base Fruits:', data.baseFruits)
+        
+        // Store the prestige level permanently
+        localStorage.setItem('currentPrestigeLevel', data.prestigeLevel)
+        localStorage.setItem('hasPrestiged', 'true')
+        
+        // Clear the temporary prestige data after processing
+        localStorage.removeItem('prestigeData')
+    }
+})
+
 // ===== DOM REFERENCES =====
 const dom = {
     // Fruit
     fruitCount: document.getElementById('fruitCounter'),
     fruit: document.getElementById('fruit'),
     passiveFruit: document.getElementById('passiveFruit'),
-    // Reset button
-    reset: document.getElementById('reset'),
     // Shop buttons
     shopButton: document.getElementById('shopButton'),
     closeShop: document.getElementById('closeShop'),
@@ -15,8 +41,6 @@ const dom = {
     // Achievement window buttons
     achievements: document.getElementById('achievements'),
     closeAchievements: document.getElementById('closeAchievementSection'),
-    // Mental health button
-    mentalHealth: document.getElementById('mentalHealth'),
     // Prestige button
     prestige: document.getElementById('prestige'),
 }
@@ -24,81 +48,63 @@ const dom = {
 // ===== CONSTANTS =====
 
 // Game settings
-const PRESTIGE_THRESHOLD = new Big(1000000000)
+const PRESTIGE_THRESHOLD = new Big(1000000000000000)
 const MAX_UPGRADES = {
-    CLICKERS: 30,
-    WORKERS: 50,
-    FARMS: 60,
-    TRADE: 50
+    FARMS: 100,
 }
 const PASSIVE_INTERVAL = 1000
 const SAVE_INTERVAL = 10000
 
 // Game properties
 const SHOP_PROPERTIES = [
-    'clickers',
-    'workers',
     'farms',
-    'trade'
 ]
 const BOOST_PROPERTIES = [
-    'gloves',
-    'gear',
-    'plow',
-    'irrigation',
-    'rome',
-    'europe',
-    'terrace',
-    'agreement',
-    'betterFields',
-    'seedDrill'
+    'highYieldVarieties',
+    'syntheticFertilizers',
+    'pesticides',
+    'herbicides',
+    'largeScaleWaterProjects',
+    'mechanization'
 ]
 
 // Other constants
 const FORMAT_THRESHOLDS = {
+    QUADRILLION: 1000000000000000,
+    TRILLION: 1000000000000,
     BILLION: 1000000000,
     MILLION: 1000000,
     THOUSAND: 1000
 }
 
 const BOOST_MULTIPLIERS = {
-    FARM: 2,
-    TRADE: 10,
-    BETTER_FIELDS: 5,
+    HYV: 2,
+    SYNTHETIC_FERTILIZERS: 3,
+    PESTICIDES: 2.5,
+    HERBICIDES: 2.5,
+    WATER_PROJECTS: 3,
+    MECHANIZATION: 4
 }
 
 const PRODUCTION_VALUES = {
-    CLICKER: 1,
-    WORKER: 10,
-    FARM: 100,
-    TRADE: 1000
+    FARM: FORMAT_THRESHOLDS.MILLION
 }
 
 const SHOP_MULTIPLIERS = {
-    CLICKER: 1.1,
-    WORKER: 1.1,
-    FARM: 1.2,
-    TRADE: 1.2
+    FARM: 1.3
 }
 
 const BASE_COSTS = {
-    CLICKER: 10,
-    WORKER: 100,
-    FARM: 1000,
-    TRADE: 10000
+    FARM: 100 * FORMAT_THRESHOLDS.MILLION
 }
 
 const BOOST_COSTS = {
-    GLOVES: 500,
-    GEAR: 7500,
-    PLOW: 10000,
-    IRRIGATION: 10000,
-    ROME: 25000,
-    EUROPE: 25000,
-    TERRACE: 25000,
-    AGREEMENT: 1000000,
-    BETTER_FIELDS: 5000000,
-    SEED_DRILL: 10000000,
+    HYV: 100 * FORMAT_THRESHOLDS.MILLION,
+    SYNTHETIC_FERTILIZERS: 200 * FORMAT_THRESHOLDS.MILLION,
+    PESTICIDES: 500 * FORMAT_THRESHOLDS.MILLION,
+    HERBICIDES: 500 * FORMAT_THRESHOLDS.MILLION,
+    WATER_PROJECTS: 5 * FORMAT_THRESHOLDS.BILLION,
+    MECHANIZATION: 5 * FORMAT_THRESHOLDS.BILLION
 }
 
 
@@ -108,79 +114,57 @@ const state = {
     fruitCount: new Big(0),
 
     // Shop upgrades
-    clickers: 0,
-    workers: 0,
-    farms: 0,
-    trade: 0,
+    farms: 1,
 
     // Boosts
-    gloves: false,
-    gear: false,
-    plow: false,
-    irrigation: false,
-    rome: false,
-    europe: false,
-    terrace: false,
-    agreement: false,
-    betterFields: false,
-    seedDrill: false,
+    highYieldVarieties: false,
+    syntheticFertilizers: false,
+    pesticides: false,
+    herbicides: false,
+    largeScaleWaterProjects: false,
+    mechanization: false,
 
     // Prestige
-    prestige: 0,
+    //prestige: 0,
 }
 
 // ===== SHOP UPGRADES =====
 const shopUpgrades = [
-    createShopUpgrade('clickers', 'Fruit Clicker', 'Images/fruitClicker(1).png', 'fruitClicker', BASE_COSTS.CLICKER, SHOP_MULTIPLIERS.CLICKER, 'clickers'),
-    createShopUpgrade('workers', 'Workers', 'Images/worker.png', 'workers', BASE_COSTS.WORKER, SHOP_MULTIPLIERS.WORKER, 'workers'),
-    createShopUpgrade('farms', 'Farms', 'Images/farm.jpg', 'farms', BASE_COSTS.FARM, SHOP_MULTIPLIERS.FARM, 'farms'),
-    createShopUpgrade('trade', 'Columbian Exchange', 'Images/trade.png', 'trade', BASE_COSTS.TRADE, SHOP_MULTIPLIERS.TRADE, 'trade'),
+    createShopUpgrade('farms', 'Farms', 'Images/farm.jpg', 'farms', BASE_COSTS.FARM, SHOP_MULTIPLIERS.FARM, 'farms')
 ]
 
 // ===== BOOSTS =====
 const boostUpgrades = [
-    createBoostUpgrade('gloves', 'Better Gloves', 'Images/betterGloves.png', 'betterGloves', BOOST_COSTS.GLOVES, 'gloves'),
-    createBoostUpgrade('gear', 'Better Gear', 'Images/betterGear.png', 'betterGear', BOOST_COSTS.GEAR, 'gear'),
-    createBoostUpgrade('plow', 'Oxen-Pulled Plows', 'Images/oxenPulledPlow.png', 'oxenPulledPlow', BOOST_COSTS.PLOW, 'plow'),
-    createBoostUpgrade('irrigation', 'Better Irrigation', 'Images/betterIrrigation.jpg', 'betterIrrigation', BOOST_COSTS.IRRIGATION, 'irrigation'),
-    createBoostUpgrade('rome', 'Roman Innovations', 'Images/romanInnovations.png', 'romanInnovations', BOOST_COSTS.ROME, 'rome'),
-    createBoostUpgrade('europe', "Europe's Three Field System", 'Images/europeanFields.jpg', 'europeanFields', BOOST_COSTS.EUROPE, 'europe'),
-    createBoostUpgrade('terrace', 'Terracing', 'Images/terrace.jpg', 'terracing', BOOST_COSTS.TERRACE, 'terrace'),
-    createBoostUpgrade('agreement', 'Trade Agreement', 'Images/tradeAgreement.png', 'tradeAgreement', BOOST_COSTS.AGREEMENT, 'agreement'),
-    createBoostUpgrade('betterFields', 'Four-Field System', 'Images/europeanFields.jpg', 'betterFields', BOOST_COSTS.BETTER_FIELDS, 'betterFields'),
-    createBoostUpgrade('seedDrill', "Jethro's Seed Drill", 'Images/seedDrill.png', 'seedDrill', BOOST_COSTS.SEED_DRILL, 'seedDrill'),
+    createBoostUpgrade('highYieldVarieties', 'High Yield Varieties', 'Images/highYieldVarieties.png', 'highYieldVarieties', BOOST_COSTS.HYV, 'highYieldVarieties'),
+    createBoostUpgrade('syntheticFertilizers', 'Synthetic Fertilizers', 'Images/syntheticFertilizer.png', 'syntheticFertilizers', BOOST_COSTS.SYNTHETIC_FERTILIZERS, 'syntheticFertilizers'),
+    createBoostUpgrade('pesticides', 'Pesticides', 'Images/pesticides.png', 'pesticides', BOOST_COSTS.PESTICIDES, 'pesticides'),
+    createBoostUpgrade('herbicides', 'Herbicides', 'Images/herbicides.png', 'herbicides', BOOST_COSTS.HERBICIDES, 'herbicides'),
+    createBoostUpgrade('largeScaleWaterProjects', 'Water Projects', 'Images/waterProject.jpg', 'largeScaleWaterProjects', BOOST_COSTS.WATER_PROJECTS, 'largeScaleWaterProjects'),
+    createBoostUpgrade('mechanization', 'Mechanization', 'Images/mechanization.jpg', 'mechanization', BOOST_COSTS.MECHANIZATION, 'mechanization'),
 ]
 
 // ===== ACHIEVEMENT DATA =====
 const achievements = [
-    // Achievements for click amounts
-    createAchievement('firstClick', 'First Click', 'Your first click!', 'Just one click!', () => state.fruitCount.gt(0)),
-    createAchievement('hundredClicks', 'Hundred Clicks', 'One hundred clicks!', 'Get a hundred clicks!', () => state.fruitCount.gt(100)),
-    createAchievement('thousandClicks', 'Thousand Clicks', 'One thousand clicks!', 'Get a thousand clicks!', () => state.fruitCount.gt(1000)),
-    createAchievement('tenThousandClicks', 'Ten Thousand Clicks', '10k clicks!', 'Get 10k clicks!', () => state.fruitCount.gt(10000)),
-    createAchievement('hundredThousandClicks', 'Hundred Thousand Clicks', '100k clicks!', 'Get 100k clicks!', () => state.fruitCount.gt(100000)),
-    createAchievement('millionClicks', 'Million Clicks', '1M clicks!', 'Get 1M clicks!', () => state.fruitCount.gt(1000000)),
-    createAchievement('tenMillionClicks', 'Ten Million Clicks', '10M clicks!', 'Get 10M clicks!', () => state.fruitCount.gt(10000000)),
-    createAchievement('hundredMillionClicks', 'Hundred Million Clicks', '100M clicks!', 'Get 100M clicks!', () => state.fruitCount.gt(100000000)),
-    createAchievement('billionClicks', 'Billion Clicks', '1B clicks!', 'Get 1B clicks!', () => state.fruitCount.gt(1000000000)),
+    // Achievements for fruit amounts
+    createAchievement('hundredMillionFruits', 'Hundred Million Fruits', '100M Fruits!', 'Get 100M Fruits!', () => state.fruitCount.gt(100 * FORMAT_THRESHOLDS.MILLION)),
+    createAchievement('billionFruits', 'Billion Fruits', '1B Fruits!', 'Get 1B Fruits!', () => state.fruitCount.gt(FORMAT_THRESHOLDS.BILLION)),
+    createAchievement('tenBillionFruits', 'Ten Billion Fruits', '10B Fruits!', 'Get 10B Fruits!', () => state.fruitCount.gt(10 * FORMAT_THRESHOLDS.BILLION)),
+    createAchievement('hundredBillionFruits', 'Hundred Billion Fruits', '100B Fruits!', 'Get 100B Fruits!', () => state.fruitCount.gt(100 * FORMAT_THRESHOLDS.BILLION)),
+    createAchievement('trillionFruits', 'Trillion Fruits', '1T Fruits!', 'Get 1T Fruits!', () => state.fruitCount.gt(FORMAT_THRESHOLDS.TRILLION)),
+    createAchievement('tenTrillionFruits', 'Ten Trillion Fruits', '10T Fruits!', 'Get 10T Fruits!', () => state.fruitCount.gt(10 * FORMAT_THRESHOLDS.TRILLION)),
+    createAchievement('hundredTrillionFruits', 'Hundred Trillion Fruits', '100T Fruits!', 'Get 100T Fruits!', () => state.fruitCount.gt(100 * FORMAT_THRESHOLDS.TRILLION)),
+    createAchievement('quadrillionFruits', 'Quadrillion Fruits', '1Qd Fruits!', 'Get 1Qd Fruits!', () => state.fruitCount.gt(FORMAT_THRESHOLDS.QUADRILLION)),
     
     // Achievements for upgrades
-    createAchievement('firstClicker', 'First Clicker', 'Your first fruit clicker!', 'Buy a fruit clicker!', () => state.clickers > 0),
-    createAchievement('firstWorker', 'First Worker', 'Your first worker!', 'Buy a worker!', () => state.workers > 0),
     createAchievement('firstFarm', 'First Farm', 'Your first farm!', 'Buy a farm!', () => state.farms > 0),
-    createAchievement('firstTrade', 'First Trade', 'Your first trade!', 'Start trading!', () => state.trade > 0),
 
     // Achievements for boosts
-    createAchievement('betterGloves', 'Better Gloves', "You've bought better gloves!", "Buy the Better Gloves boost!", () => state.gloves),
-    createAchievement('betterGear', 'Better Gear', "You've bought Better Gear!", "Buy the Better Gear boost!", () => state.gear),
-    createAchievement('oxenPlow', 'Oxen-Pulled Plows', "You've implemented Oxen Plows!", "Implement Oxen Plows!", () => state.plow),
-    createAchievement('irrigation', 'Better Irrigation', "You've implemented Better Irrigation", 'Upgrade your irrigation!', () => state.irrigation),
-    createAchievement('romanInnovations', 'Roman Innovations', "You've innovated!", 'Innovate like the Romans did!', () => state.rome),
-    createAchievement('europe', "Europe's Three Field System", "You've implemented Europe's Three Field System!", 'Implement the field system!', () => state.europe),
-    createAchievement('terracing', 'Terracing', 'You have terraces!', 'Get terraces!', () => state.terrace),
-    createAchievement('agreement', 'Agreement', "You've gotten better trade agreements!", 'Get better trade agreements!', () => state.agreement),
-    createAchievement('betterFields', "Four-Field System", "You've implemented the Four-Field System!", 'Implement the Four-Field System!', () => state.betterFields),
-    createAchievement('seedDrill', "Jethro's Seed Drill", "You've implemented Jethro's Seed Drill!", "Buy Jethro's Seed Drill!", () => state.seedDrill),
+    createAchievement('highYieldVarieties', 'High Yield Varieties', "You've researched HYV!", "Research HYV!", () => state.highYieldVarieties),
+    createAchievement('syntheticFertilizers', 'Synthetic Fertilizers', "You've researched Synthetic Fertilizers!", "Research Synthetic Fertilizers!", () => state.syntheticFertilizers),
+    createAchievement('pesticides', 'Pesticides', "You've researched Pesticides!!", "Research Pesticides!", () => state.pesticides),
+    createAchievement('herbicides', 'Herbicides', "You've researched Herbicides!", 'Research Herbicides!', () => state.herbicides),
+    createAchievement('largeScaleWaterProjects', 'Water Projects', "You've researched Large Scale Water Projects!!", 'Research Large Scale Water Projects!', () => state.largeScaleWaterProjects),
+    createAchievement('mechanization', 'Mechanization', "You've researched Mechanization!!", 'Research Mechanization!', () => state.mechanization),
 ]
 
 // ===== STATE MANAGEMENT =====
@@ -191,7 +175,7 @@ function loadState() {
         state.fruitCount = parsedState.fruitCount ? new Big(parsedState.fruitCount) : new Big(0)
         
         SHOP_PROPERTIES.forEach(prop => {
-            state[prop] = parsedState[prop] || 0
+            state[prop] = parsedState[prop] || 1
         })
         
         BOOST_PROPERTIES.forEach(prop => {
@@ -296,7 +280,11 @@ function hideSection(type) {
 function formatNumber(num) {
     const value = num instanceof Big ? num.toNumber() : num
     
-    if (value >= FORMAT_THRESHOLDS.BILLION) {
+    if (value >= FORMAT_THRESHOLDS.QUADRILLION) {
+        return (value / FORMAT_THRESHOLDS.QUADRILLION).toFixed(1).replace(/\.0$/, '') + 'Qd'
+    } else if (value >= FORMAT_THRESHOLDS.TRILLION) {
+        return (value / FORMAT_THRESHOLDS.TRILLION).toFixed(1).replace(/\.0$/, '') + 'T'
+    } else if (value >= FORMAT_THRESHOLDS.BILLION) {
         return (value / FORMAT_THRESHOLDS.BILLION).toFixed(1).replace(/\.0$/, '') + 'B'
     } else if (value >= FORMAT_THRESHOLDS.MILLION) {
         return (value / FORMAT_THRESHOLDS.MILLION).toFixed(1).replace(/\.0$/, '') + 'M'
@@ -314,32 +302,21 @@ function passiveIncome() {
 }
 
 function calculatePassiveIncome() {
-    let workersVal = state.workers * PRODUCTION_VALUES.WORKER
     let farmVal = state.farms * PRODUCTION_VALUES.FARM
-    let tradeVal = state.trade * PRODUCTION_VALUES.TRADE
 
     // Applying the boost multipliers...
-    if (state.plow) farmVal *= BOOST_MULTIPLIERS.FARM
-    if (state.irrigation) farmVal *= BOOST_MULTIPLIERS.FARM
-    if (state.rome) farmVal *= BOOST_MULTIPLIERS.FARM
-    if (state.europe) farmVal *= BOOST_MULTIPLIERS.FARM
-    if (state.terrace) farmVal *= BOOST_MULTIPLIERS.FARM
-    if (state.agreement) tradeVal *= BOOST_MULTIPLIERS.TRADE
-    if (state.betterFields) farmVal *= BOOST_MULTIPLIERS.BETTER_FIELDS
-    if (state.seedDrill) farmVal *= BOOST_MULTIPLIERS.BETTER_FIELDS
+    if (state.highYieldVarieties) farmVal *= BOOST_MULTIPLIERS.HYV
+    if (state.syntheticFertilizers) farmVal *= BOOST_MULTIPLIERS.SYNTHETIC_FERTILIZERS
+    if (state.pesticides) farmVal *= BOOST_MULTIPLIERS.PESTICIDES
+    if (state.herbicides) farmVal *= BOOST_MULTIPLIERS.HERBICIDES
+    if (state.largeScaleWaterProjects) farmVal *= BOOST_MULTIPLIERS.WATER_PROJECTS
+    if (state.mechanization) farmVal *= BOOST_MULTIPLIERS.MECHANIZATION
 
-    return new Big(state.clickers).plus(workersVal).plus(farmVal).plus(tradeVal)
+    return new Big(farmVal)
 }
 
 function addFruit() {
-    if (state.gear && state.gloves) {
-        state.fruitCount = state.fruitCount.plus(1000)
-    } else if (state.gloves) {
-        state.fruitCount = state.fruitCount.plus(100)
-    } else {
-        state.fruitCount = state.fruitCount.plus(1)
-    }
-
+    state.fruitCount = state.fruitCount.plus(1)
     updateUI()
 }
 
@@ -516,9 +493,6 @@ function eventHandlers() {
     // Fruit
     dom.fruit.addEventListener('click', addFruit)
 
-    // Reset
-    dom.reset.addEventListener('click', reset)
-
     // Shops
     dom.shopButton.addEventListener('click', () => showSection('shopSection'))
     dom.closeShop.addEventListener('click', () => hideSection('shopSection'))
@@ -529,15 +503,12 @@ function eventHandlers() {
     dom.achievements.addEventListener('click', () => showSection('achievementSection'))
     dom.closeAchievements.addEventListener('click', () => hideSection('achievementSection'))
 
-    // Mental health awareness
-    dom.mentalHealth.addEventListener('click', () => {window.open('https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response', '_blank')})
-
     // Prestige
-    dom.prestige.addEventListener('click', prestige)
+    //dom.prestige.addEventListener('click', prestige)
 }
 
 // ===== INITIALIZATION =====
-checkPrestigeRedirect()
+//checkPrestigeRedirect()
 loadState()
 eventHandlers()
 generateShopUpgrades()

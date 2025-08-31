@@ -1,18 +1,32 @@
+/* CSS Variables for Modern Agricultural Green Theme */
+:root {
+    --primary-green: #2E8B57;      /* Sea Green - represents growth */
+    --secondary-green: #90EE90;    /* Light Green - fresh crops */
+    --accent-green: #228B22;       /* Forest Green - mature fields */
+    --background: #F0F8F0;         /* Very light green tint */
+    --surface: #E8F5E8;            /* Light green surface */
+    --text-dark: #1B4D3E;          /* Dark green text */
+    --text-light: #FFFFFF;         /* White text */
+    --accent-gold: #FFD700;        /* Golden wheat color */
+}
+
 /* Main stuff */
 body {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     text-align: center;
-    background-color: beige;
+    background-color: var(--background);
+    color: var(--text-dark);
 }
 
 #header {
-    border: 2px solid bisque;
+    border: 2px solid var(--primary-green);
     border-radius: 12px;
     padding: 20px;
-    background: bisque;
+    background: var(--surface);
     width: 600px;
     margin-left: auto;
     margin-right: auto;
+    color: var(--text-dark);
 }
 
 #fruit {
@@ -28,7 +42,8 @@ body {
 
 /* Button styling */
 .buttons button {
-    background-color: bisque;
+    background-color: var(--primary-green);
+    color: var(--text-light);
     border: none;
     border-radius: 8px;
     padding: 12px 28px;
@@ -39,15 +54,15 @@ body {
 }
 
 .buttons button:hover {
-    background-color: antiquewhite;
+    background-color: var(--accent-green);
     transform: scale(1.05);
 }
 
 /* Sections */
 .section {
-    border: 2px solid burlywood;
+    border: 2px solid var(--primary-green);
     padding: 24px;
-    background: blanchedalmond;
+    background: var(--surface);
     border-radius: 12px;
     width: 600px;
     margin: 40px auto;
@@ -57,6 +72,7 @@ body {
     transform: scale(0.9);
     height: 400px;
     overflow-y: auto;
+    color: var(--text-dark);
 }
 
 /* Upgrades */
@@ -71,15 +87,15 @@ body {
     align-items: center;
     gap: 10px;
     margin: 10px 0;
-    border: 2px solid wheat;
+    border: 2px solid var(--secondary-green);
     border-radius: 10px;
-    background-color: wheat;
+    background-color: var(--background);
 }
 
 /* Buy buttons */
 .buyButtons {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--accent-green);
+    color: var(--text-light);
     border: none;
     border-radius: 8px;
     padding: 10px 20px;
@@ -91,7 +107,7 @@ body {
 }
 
 .buyButtons:hover {
-    background-color: #45a049;
+    background-color: var(--primary-green);
     transform: scale(1.05);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -111,28 +127,21 @@ body {
 
 /* Cost styling */
 .message {
-    border: 2px solid black;
+    border: 2px solid var(--primary-green);
     border-radius: 8px;
     padding: 8px 12px;
-    background-color: white;
+    background-color: var(--surface);
     display: inline-block;
     margin: 5px 0;
-}
-
-/* Mental health awareness button styling */
-#mentalHealth {
-    background-color: blue;
-}
-
-#mentalHealth:hover {
-    background-color: skyblue;
+    color: var(--text-dark);
 }
 
 /* Prestige button styling */
 #prestige {
-    background-color: gold;
+    background-color: var(--accent-gold);
+    color: var(--text-dark);
 }
 
 #prestige:hover {
-    background-color: rgb(255, 234, 112);
+    background-color: #FFED4E;
 }
